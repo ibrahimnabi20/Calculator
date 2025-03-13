@@ -26,7 +26,7 @@ jobs:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.0.x'
+          dotnet-version: '8.0.x'
 
       - name: Restore dependencies
         run: dotnet restore
@@ -85,3 +85,4 @@ jobs:
       - name: Run TestCafé E2E Test
         run: |
           docker-compose run testcafe
+
