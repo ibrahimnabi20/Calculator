@@ -74,14 +74,14 @@ jobs:
           name: StrykerReport
           path: StrykerOutput
 
-      - name: Deploy Backend
+      - name: Deploy Application with Docker Compose
         run: |
-          docker-compose -f compose.yaml up --build -d
+          docker-compose up --build -d
 
-      - name: Run K6 Performance Tests
+      - name: Run K6 Load Test
         run: |
           docker-compose run k6
 
-      - name: Run TestCafé End-to-End Tests
+      - name: Run TestCafé E2E Test
         run: |
-          docker-compose run testcafe chromium /tests/e2e_test.js
+          docker-compose run testcafe
