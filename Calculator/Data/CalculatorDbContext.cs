@@ -1,6 +1,11 @@
-﻿namespace Calculator.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Calculator.Models;
 
-public class CalculatorDbContext
+namespace Calculator.Data
 {
-    
+    public class CalculatorDbContext : DbContext
+    {
+        public CalculatorDbContext(DbContextOptions<CalculatorDbContext> options) : base(options) { }
+        public DbSet<CalculationHistory> CalculationHistories { get; set; }
+    }
 }

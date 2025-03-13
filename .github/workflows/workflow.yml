@@ -18,7 +18,13 @@ jobs:
           dotnet tool install -g dotnet-sonarscanner
           dotnet tool install -g dotnet-reportgenerator-globaltool
           dotnet tool install -g dotnet-stryker
-          
+
+      - name: Application Version
+        id: semver-app
+        uses: paulhatch/semantic-version@v5.4.0
+        with:
+          bump_each_commit: true
+
       - name: Start Static Code Analysis
         run: | # INSERT RELEVANT VARIABLES BELOW
           dotnet sonarscanner begin \
@@ -36,12 +42,12 @@ jobs:
       # We build but do not redo our dependencies as it takes time and there is no need.
       - name: Build
         run: dotnet build --no-restore
-          
+
       - name: Run unit tests
         run: |
           dotnet test --collect:"XPlat Code Coverage" --results-directory TestResults
         # Write a command to execute unit tests while collecting code coverage
-        
+
       - name: Generate report
         run: |
           reportgenerator \
@@ -49,12 +55,12 @@ jobs:
           -targetdir:coverage-report \
           -reporttypes:SonarQube
         # Use the ReportGenerator tool to generate a report from the code coverage results
-        
+      
       #We run the Static Code Analysis, 
       - name: Complete Static Code Analysis
-        run: | 
+        run: |
           dotnet sonarscanner end \
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \ 
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
 
       - name: Run Mutation Tests
         run: |
@@ -67,7 +73,7 @@ jobs:
         with:
           name: CoverageReport
           path: coverage-report
-        # Complete this step sp it uploads the coverage report to the artifacts - make it run always even if previous steps fail
+        # Complete this step so it uploads the coverage report to the artifacts - make it run always even if previous steps fail
 
       - name: Collect Stryker Report
         if: always()
@@ -76,4 +82,6 @@ jobs:
           name: StrykerReport
           path: StrykerOutput
         # Complete this step so it uploads the Stryker report to the artifacts - make it run always even if previous steps fail
-    
+
+      - name: Display Version
+        run: echo "Generated version is ${{ steps.semver-app.outputs.version }}"
